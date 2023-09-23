@@ -1,0 +1,10 @@
+https://fabianwerkmeister.notion.site/Project-Structure-4bdb4d1a9d4b4b4486649e2ba9ef5cc7
+
+exactly how to structure the project:
+https://drivendata.github.io/cookiecutter-data-science/#getting-started
+
+
+1 pip install cookiecutter
+
+2 Starting a new project
+    cookiecutter https://github.com/drivendata/cookiecutter-data-science
