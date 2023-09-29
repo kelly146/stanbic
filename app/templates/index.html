@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Insights From Social Media Data</title>
+  <meta
+    content="Playhouse Communication is one of Nigeria's leading digital marketing agencies. They combine design and media planning with cutting-edge tech solutions to reimagine what marketing is all about. Their client roster is a mix of global juggernauts and nimble SMEs, each redefining their sectors. We are rolling out the ultimate arena for innovation in data and setting the stage for up and coming data scientists and analysts to showcase their skills, win huge cash prizes, and boost their careers. The "
+    Hack the Feed" hackathon is a showdown where data analytics meets creative prowess. Your mission? To decode a
+    treasure trove of social media data for one of our high-profile clients and transform it into game-changing
+    insights. In a rare move, we're handing you the keys to a vault of exclusive social media data to let you dig deep,
+    get creative, and strike gold with actionable insights that could redefine the future of digital marketing. This
+    isn't just a hackathon; it's your chance to shape the future of digital engagement. 🚀" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="../assets/img/logo.png" rel="icon">
+  <link href="../assets/img/logo.png" rel="apple-touch-icon">
+  <link rel="shortcut icon" href="../assets/img/logo.png" type="image/x-icon">
+
+  <!-- <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script> -->
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+
+  <!-- Your custom CSS -->
+  <style>
+    /* Add your custom CSS styles here */
+    body {
+      background-color: #f8f9fa;
+      /* Background color for the body */
+    }
+
+    .card {
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control {
+      border: 1px solid #343637;
+      /* Add the border style you prefer */
+    }
+
+    /* Set fixed height for content type cards */
+    #contentTypesRow .card {
+      padding-top: 40px;
+      height: 180px;
+      overflow: hidden;
+    }
+
+    .selected-card {
+      background: rgba(0, 123, 255, 0.1);
+      /* Border color for selected cards */
+    }
+
+    .center-text {
+      text-align: center;
+      /* Center text in cards */
+    }
+
+    .sidebar {
+      background-color: #343a40;
+      /* Sidebar background color */
+      color: #fff;
+      /* Text color for sidebar */
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .analysis-heading {
+      color: #17a2b8;
+      /* Heading color for content analysis */
+    }
+
+    .analysis-content {
+      color: #ccc;
+      /* Text color for content analysis */
+    }
+
+    .add-tag-button {
+      background-color: #007bff;
+      /* Button background color */
+      border-color: #007bff;
+      /* Button border color */
+      color: #fff;
+      /* Button text color */
+    }
+
+    .add-tag-button:hover {
+      background-color: #0056b3;
+      /* Button background color on hover */
+      border-color: #0056b3;
+      /* Button border color on hover */
+    }
+
+    .badge-close {
+      cursor: pointer;
+    }
+
+    .social-icon {
+      font-size: 24px;
+      /* Icon size */
+    }
+
+    .analyze-button {
+      background-color: #28a745;
+      /* Analyze button background color */
+      border-color: #28a745;
+      /* Analyze button border color */
+      color: #fff;
+      /* Analyze button text color */
+    }
+
+    .analyze-button:hover {
+      background-color: #218838;
+      /* Analyze button background color on hover */
+      border-color: #218838;
+      /* Analyze button border color on hover */
+    }
+
+    .spinner {
+      display: none;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #007bff;
+      animation: spin 2s linear infinite;
+      width: 15px;
+      height: 15px;
+      margin-left: 10px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container-fluid">
+    <div class="row bg-light">
+      <!-- Sidebar for Content Analysis -->
+      <div class="col-2 sidebar">
+        <h3 class="analysis-heading">Content Analysis</h3>
+        <p class="analysis-content" id="analysisResult">Analysis will display here</p>
+        <!-- Add content analysis content here -->
+        <div style="position: absolute; bottom: 25px;" class="text-center">
+          <button class="btn btn-md btn-success analyze-button w-100" id="analyzeButton">Analyze<div id="spinner" class="spinner"></div></button>
+          
+        </div>
+      </div>
+
+      <div class="col-10">
+        <div class="container">
+          <div class="m-4">
+            <span class="mt-5 h1"> Insights From Social Media Data</span>
+            <img src="../assets/img/logo.png" alt="" style="float: right; height: 70px;">
+          </div>
+
+          <div class="mt-3 h6">
+            Network
+           </div>
+          <!-- First Row (Social Media) -->
+          <div class="row mt-2" id="socialMediaRow">
+            <!-- JavaScript will populate this row -->
+          </div>
+          <div class="mt-3 h6">
+           Content Type
+          </div>
+          <!-- Second Row (Content Types) -->
+          <div class="row mt-2" id="contentTypesRow">
+            <!-- JavaScript will populate this row -->
+          </div>
+
+          <!-- Third Row for Tags -->
+          <div class="row mt-5 mb-2">
+            <div class="col-md-6">
+              <div class="tags-container">
+                <!-- Display tags here -->
+                <!-- Add more tags as needed -->
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="input-group">
+                <input type="text" class="form-control border-1" placeholder="Add a tag">
+                <button class="btn btn-primary add-tag-button">Add</button>
+              </div>
+            </div>
+          </div>
+          <div class="h6">
+            Post
+           </div>
+          <!-- Fourth Row for Post Text -->
+          <div class="row mt-3">
+            <div class="col">
+              <textarea id="posttext" class="form-control" style="min-height: 120px;"
+                placeholder="Write your post here">
+If you had two hours to listen to someone speak, what would you like to listen to:
+-Career lessons 💻
+-Business tips 👩‍💼👨‍💼
+-Soft life living 😉
+              </textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JavaScript (Popper.js and Bootstrap JS) -->
+
+  <script>
+    // JavaScript code to handle card selection and tag management
+
+    // Array to store the selected card indices
+    const selectedCardIndices = [0];
+
+    // Array to store the selected content type indices
+    const selectedContentTypeIndices = [0];
+
+    const taglist = [];
+
+    // Sample social media data with icons
+    const socialMediaData = [
+      { name: "Facebook", icon: "fab fa-facebook", color: "#1877f2" },
+      { name: "Twitter", icon: "fab fa-twitter", color: "#1da1f2" },
+      { name: "Instagram", icon: "fab fa-instagram", color: "#e4405f" },
+      { name: "LinkedIn", icon: "fab fa-linkedin", color: "#0077b5" },
+    ];
+
+    // Sample content types with icons
+    const contentTypes = [
+      { name: "Video", icon: "fas fa-video", color: "#ff5733" },
+      { name: "Carousel", icon: "fas fa-images", color: "#17a2b8" },
+      { name: "Photo", icon: "fas fa-camera", color: "#28a745" },
+      { name: "Document", icon: "fas fa-file-pdf", color: "#ffc107" },
+      { name: "Text", icon: "fas fa-text-slash", color: "#6610f2" },
+    ];
+
+    // Function to create social media cards
+    function createSocialMediaCards() {
+      const socialMediaRow = document.getElementById("socialMediaRow");
+      socialMediaData.forEach((media, index) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("col", "center-text");
+        cardDiv.innerHTML = `
+                    <div class="card" style="border-color: ${media.color};">
+                        <div class="card-body">
+                            <i class="${media.icon} social-icon" style="color: ${media.color};"></i>
+                            <h5 class="card-title">${media.name}</h5>
+                        </div>
+                    </div>
+                `;
+
+        cardDiv.addEventListener("click", () => {
+          toggleCardSelection(index);
+        });
+
+        socialMediaRow.appendChild(cardDiv);
+      });
+    }
+
+    // Function to create content type cards
+    function createContentTypes() {
+      const contentTypesRow = document.getElementById("contentTypesRow");
+      contentTypes.forEach((type, index) => {
+        const cardDiv = document.createElement("div");
+        cardDiv.classList.add("col", "center-text");
+        cardDiv.innerHTML = `
+                    <div class="card" style="border-color: ${type.color};">
+                        <div class="card-body">
+                            <i class="${type.icon} content-type-icon" style="color: ${type.color};"></i>
+                            <h5 class="card-title">${type.name}</h5>
+                        </div>
+                    </div>
+                `;
+
+        cardDiv.addEventListener("click", () => {
+          toggleContentTypeSelection(index);
+        });
+
+        contentTypesRow.appendChild(cardDiv);
+      });
+    }
+
+    // Function to toggle card selection
+    function toggleCardSelection(cardIndex) {
+      if (selectedCardIndices.includes(cardIndex)) {
+        // If already selected, deselect the card
+        const indexToRemove = selectedCardIndices.indexOf(cardIndex);
+        selectedCardIndices.splice(indexToRemove, 1);
+      } else {
+        // If not selected, select the card
+        selectedCardIndices.push(cardIndex);
+      }
+
+      // Update the card styles based on selection
+      updateCardStyles();
+    }
+
+    // Function to toggle content type selection
+    function toggleContentTypeSelection(contentTypeIndex) {
+      if (selectedContentTypeIndices.includes(contentTypeIndex)) {
+        // If already selected, deselect the content type
+        const indexToRemove = selectedContentTypeIndices.indexOf(contentTypeIndex);
+        selectedContentTypeIndices.splice(indexToRemove, 1);
+      } else {
+        // If not selected, select the content type
+        selectedContentTypeIndices.push(contentTypeIndex);
+      }
+
+      // Update the content type card styles based on selection
+      updateContentTypeStyles();
+    }
+
+    // Function to update card styles based on selection
+    function updateCardStyles() {
+      const socialMediaCards = document.querySelectorAll("#socialMediaRow .card");
+      socialMediaCards.forEach((card, index) => {
+        if (selectedCardIndices.includes(index)) {
+          card.classList.add("selected-card");
+        } else {
+          card.classList.remove("selected-card");
+        }
+      });
+    }
+
+    // Function to update content type card styles based on selection
+    function updateContentTypeStyles() {
+      const contentTypeCards = document.querySelectorAll("#contentTypesRow .card");
+      contentTypeCards.forEach((card, index) => {
+        if (selectedContentTypeIndices.includes(index)) {
+          card.classList.add("selected-card");
+        } else {
+          card.classList.remove("selected-card");
+        }
+      });
+    }
+
+    // Function to add a tag
+    function addTag() {
+      const tagInput = document.querySelector('.form-control');
+      const tagText = tagInput.value.trim();
+      if (tagText) {
+        taglist.push(tagText);
+        const tagContainer = document.querySelector('.tags-container');
+        const tag = document.createElement('span');
+        tag.classList.add('badge', 'bg-secondary', 'mx-2');
+        tag.innerHTML = `${tagText} <span class="badge-close">&times;</span>`;
+        tagContainer.appendChild(tag);
+
+        // Clear the tag input field
+        tagInput.value = '';
+      }
+    }
+    function addTag2(tagText) {
+      if (tagText) {
+        taglist.push(tagText);
+        const tagContainer = document.querySelector('.tags-container');
+        const tag = document.createElement('span');
+        tag.classList.add('badge', 'bg-secondary', 'mx-2');
+        tag.innerHTML = `${tagText} <span class="badge-close">&times;</span>`;
+        tagContainer.appendChild(tag);
+
+      }
+    }
+    // Function to simulate typing effect for displaying messages
+    function typeMessage(message, element) {
+      const typingSpeed = 50; // Adjust the typing speed as needed (milliseconds per character)
+      let charIndex = 0;
+      const messageLength = message.length;
+      const messageElement = document.getElementById(element);
+
+      function type() {
+        if (charIndex < messageLength) {
+          messageElement.innerHTML += message.charAt(charIndex);
+          charIndex++;
+          setTimeout(type, typingSpeed);
+        }
+      }
+
+      type();
+    }
+    // Event listener for adding tags
+    const addTagButton = document.querySelector('.add-tag-button');
+    addTagButton.addEventListener('click', () => {
+      addTag();
+    });
+
+    // Event listener for deleting tags
+    const tagContainer = document.querySelector('.tags-container');
+    tagContainer.addEventListener('click', (event) => {
+      if (event.target.classList.contains('badge-close')) {
+        const removedTag = event.target.parentElement.textContent.trim(); // Get the text content of the tag to be removed
+        removeTag(removedTag);
+        event.target.parentElement.remove();
+      }
+    });
+    // Function to remove a tag from the list
+    function removeTag(tagText) {
+      const tagIndex = taglist.indexOf(tagText);
+      if (tagIndex !== -1) {
+        taglist.splice(tagIndex, 1); // Remove the tag from the array
+      }
+    }
+
+    // Event listener for the Analyze button
+    const analyzeButton = document.getElementById('analyzeButton');
+    const spinner = document.getElementById('spinner');
+    analyzeButton.addEventListener('click', () => {
+      // Show spinner when the Analyze button is clicked
+      spinner.style.display = 'inline-block';
+
+      // Simulate an analysis process (you can replace this with your actual analysis logic)
+      setTimeout(() => {
+        // Hide the spinner after the analysis is complete (simulated)
+        spinner.style.display = 'none';
+        const indata = {
+          "content": selectedContentTypeIndices,
+          "networks": selectedCardIndices,
+          "tags": taglist,
+          "post": document.querySelector('#posttext').value.trim()
+        };
+
+        // Send a POST request to localhost/api/pred
+        fetch('http://localhost/api/pred', {
+          method: 'POST',
+          body: JSON.stringify(indata),
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // Handle the response data here
+            console.log(data);
+
+            // Check if there's a response
+            if (data && data.response) {
+              // Replace the "Lorem ipsum" text with the response
+              const analysisResult = document.getElementById('analysisResult');
+              analysisResult.innerHTML = ''; // Clear existing text
+              typeMessage(data.response, 'analysisResult');
+            } else {
+              // Display an error message with a typing effect
+              const analysisResult = document.getElementById('analysisResult');
+              analysisResult.innerHTML = ''; // Clear existing text
+              typeMessage("We have a problem processing your input...", 'analysisResult');
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            // Display an error message with a typing effect
+            const analysisResult = document.getElementById('analysisResult');
+            analysisResult.innerHTML = ''; // Clear existing text
+            typeMessage("We have a problem processing your input...", 'analysisResult');
+          });
+      }, 2000); // Simulated delay of 2 seconds
+    });
+    // Initialize the social media cards and content types
+    createSocialMediaCards();
+    createContentTypes();
+    updateContentTypeStyles()
+    updateCardStyles()
+    addTag2('Viral')
+    addTag2('Stanbic')
+    addTag2('IBTC')
+    addTag2('Finance')
+  </script>
+</body>
+
+</html>
