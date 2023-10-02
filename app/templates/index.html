@@ -15,19 +15,71 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="../assets/img/logo.png" rel="icon">
-  <link href="../assets/img/logo.png" rel="apple-touch-icon">
-  <link rel="shortcut icon" href="../assets/img/logo.png" type="image/x-icon">
+  <link href="assets/img/logo.png" rel="icon">
+  <link href="assets/img/logo.png" rel="apple-touch-icon">
+  <link rel="shortcut icon" href="assets/img/logo.png" type="image/x-icon">
 
   <!-- <script type="text/javascript" src="https://public.tableau.com/javascripts/api/tableau-2.min.js"></script> -->
 
   <!-- Vendor CSS Files -->
-  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-  <link href="../assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
-
+  <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="assets/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
   <!-- Your custom CSS -->
   <style>
+    /* CSS for the suggestion hover effect */
+    .suggestion-item {
+      cursor: pointer;
+      transition: background-color 0.2s;
+      padding: 6px;
+      /* Smooth transition */
+    }
+
+    .suggestion-item:hover {
+      background-color: #e0e0e0;
+      /* Change background color on hover */
+    }
+
+    .video-color {
+      color: #ff5733
+    }
+
+    .carousel-color {
+      color: #17a2b8
+    }
+
+    .photo-color {
+      color: #28a745
+    }
+
+    .document-color {
+      color: #ffc107
+    }
+
+    .text-color {
+      color: #6610f2
+    }
+
+    .link-color {
+      color: #1094f2
+    }
+
+    .facebook-color {
+      color: #1877f2;
+    }
+
+    .twitter-color {
+      color: #1da1f2;
+    }
+
+    .instagram-color {
+      color: #e4405f;
+    }
+
+    .linkedin-color {
+      color: #0077b5;
+    }
+
     /* Add your custom CSS styles here */
     body {
       background-color: #f8f9fa;
@@ -67,6 +119,7 @@
       /* Text color for sidebar */
       padding: 20px;
       min-height: 100vh;
+      overflow: none;
     }
 
     .analysis-heading {
@@ -131,6 +184,10 @@
       margin-left: 10px;
     }
 
+    .col-0 {
+      display: none;
+    }
+
     @keyframes spin {
       0% {
         transform: rotate(0deg);
@@ -141,42 +198,82 @@
       }
     }
   </style>
+  <script src="assets/js/d3.min.js"></script>
+  <script src="assets/js/googlechart.js"></script>
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/jquery_custom.min.js"></script>
+  <script src="assets/js/pivot.js"></script>
+  <link rel="stylesheet" href="assets/css/pivot.css">
+  <script type="text/javascript" src="assets/js/gchart_renderers.js"></script>
+  <script type="text/javascript" src="assets/js/d3_renderers.js"></script>
+  <script type="text/javascript" src="assets/js/touch-punch.min.js"></script>
+  <!-- Pivot after jQuery -->
 </head>
 
 <body>
-  <div class="container-fluid">
+  <div style="position: absolute; bottom: 25px;" class="text-center">
+    <button class="btn btn-md btn-success analyze-button w-100" id="analyzeButton">Analyze<div id="spinner"
+        class="spinner"></div></button>
+
+  </div>
+  <div class="container-fluid" style="overflow: hidden;">
     <div class="row bg-light">
       <!-- Sidebar for Content Analysis -->
-      <div class="col-2 sidebar">
-        <h3 class="analysis-heading">Content Analysis</h3>
-        <p class="analysis-content" id="analysisResult">Analysis will display here</p>
-        <!-- Add content analysis content here -->
-        <div style="position: absolute; bottom: 25px;" class="text-center">
-          <button class="btn btn-md btn-success analyze-button w-100" id="analyzeButton">Analyze<div id="spinner" class="spinner"></div></button>
-          
+      <div class="col-2 sidebar" id="col1">
+        <div class="row">
+          <div class="col-12" style="overflow-x: auto;">
+            <span><i class="fas fa-arrow-right" id="backbtn"></i></span>
+            <h3 class="analysis-heading">Content Analysis</h3>
+
+            <p class="analysis-content" id="analysisResulttop"></p>
+            <div id="output" style="margin: 10px;"></div>
+            <p class="analysis-content" id="analysisResult">Analysis will display here</p>
+            <!-- Add content analysis content here -->
+
+          </div>
         </div>
       </div>
 
-      <div class="col-10">
+      <div class="col-10" id="col2">
+        <!-- Add a container for the pivot table -->
+
         <div class="container">
           <div class="m-4">
             <span class="mt-5 h1"> Insights From Social Media Data</span>
-            <img src="../assets/img/logo.png" alt="" style="float: right; height: 70px;">
+            <img src="assets/img/logo.png" alt="" style="float: right; height: 70px;">
           </div>
 
           <div class="mt-3 h6">
             Network
-           </div>
+          </div>
           <!-- First Row (Social Media) -->
           <div class="row mt-2" id="socialMediaRow">
-            <!-- JavaScript will populate this row -->
+            {% for key, value in data.social_media.items() %}
+            <div class="col center-text">
+              <div class="card smcard">
+                <div class="card-body">
+                  <i class="fab fa-{{ key.lower() }} {{ key.lower() }}-color social-icon"></i>
+                  <h5 class="card-title">{{ key }}</h5>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
           </div>
           <div class="mt-3 h6">
-           Content Type
+            Content Type
           </div>
           <!-- Second Row (Content Types) -->
           <div class="row mt-2" id="contentTypesRow">
-            <!-- JavaScript will populate this row -->
+            {% for key, value in data.content_types.items() %}
+            <div class="col center-text">
+              <div class="card ctcard">
+                <div class="card-body">
+                  <i class="{{ data.icons[key] }} {{ key.lower() }}-color social-icon"></i>
+                  <h5 class="card-title">{{ key }}</h5>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
           </div>
 
           <!-- Third Row for Tags -->
@@ -189,14 +286,17 @@
             </div>
             <div class="col-md-6">
               <div class="input-group">
-                <input type="text" class="form-control border-1" placeholder="Add a tag">
+                <input type="text" class="form-control border-1" id="tagInput" placeholder="Add a tag">
                 <button class="btn btn-primary add-tag-button">Add</button>
+              </div>
+              <div id="suggestions"
+                style="position: absolute; background-color: white; width: 550px; max-height: 160px; overflow-x: auto;">
               </div>
             </div>
           </div>
           <div class="h6">
             Post
-           </div>
+          </div>
           <!-- Fourth Row for Post Text -->
           <div class="row mt-3">
             <div class="col">
@@ -214,214 +314,467 @@ If you had two hours to listen to someone speak, what would you like to listen t
     </div>
   </div>
 
-  <!-- Bootstrap JavaScript (Popper.js and Bootstrap JS) -->
 
-  <script>
-    // JavaScript code to handle card selection and tag management
 
-    // Array to store the selected card indices
-    const selectedCardIndices = [0];
+  <script type="text/javascript">
+    $(function () {
 
-    // Array to store the selected content type indices
-    const selectedContentTypeIndices = [0];
+      google.load("visualization", "1", { packages: ["corechart", "charteditor"] });
+      function renderpivot(mps) {
+        var derivers = $.pivotUtilities.derivers;
+        $("#output").pivotUI(mps, {
+          renderers: $.extend(
+            $.pivotUtilities.renderers,
+            $.pivotUtilities.gchart_renderers,
+            $.pivotUtilities.d3_renderers
+          ),
 
-    const taglist = [];
+          cols: ["Network"],
+          rows: ["COntent_Type"],
+          aggregatorName: "Sum",
+          rendererName: "Bar Chart",
+          vals: ["engagements"],
+        });
+      }
 
-    // Sample social media data with icons
-    const socialMediaData = [
-      { name: "Facebook", icon: "fab fa-facebook", color: "#1877f2" },
-      { name: "Twitter", icon: "fab fa-twitter", color: "#1da1f2" },
-      { name: "Instagram", icon: "fab fa-instagram", color: "#e4405f" },
-      { name: "LinkedIn", icon: "fab fa-linkedin", color: "#0077b5" },
-    ];
+      function convertJson(input) {
+        const output = [];
 
-    // Sample content types with icons
-    const contentTypes = [
-      { name: "Video", icon: "fas fa-video", color: "#ff5733" },
-      { name: "Carousel", icon: "fas fa-images", color: "#17a2b8" },
-      { name: "Photo", icon: "fas fa-camera", color: "#28a745" },
-      { name: "Document", icon: "fas fa-file-pdf", color: "#ffc107" },
-      { name: "Text", icon: "fas fa-text-slash", color: "#6610f2" },
-    ];
+        for (const platform in input) {
+          for (const contentType in input[platform]) {
+            output.push({
+              Network: platform,
+              COntent_Type: contentType,
+              engagements: input[platform][contentType].engagements,
+              impressions: input[platform][contentType].impressions,
+              reactions: input[platform][contentType].reactions,
+              subscribers: input[platform][contentType].subscribers,
+              shares: input[platform][contentType].shares,
+              profile_clicks: input[platform][contentType].profile_clicks,
+              engaged_users: input[platform][contentType].engaged_users
+            });
+          }
+        }
 
-    // Function to create social media cards
-    function createSocialMediaCards() {
-      const socialMediaRow = document.getElementById("socialMediaRow");
-      socialMediaData.forEach((media, index) => {
-        const cardDiv = document.createElement("div");
-        cardDiv.classList.add("col", "center-text");
-        cardDiv.innerHTML = `
-                    <div class="card" style="border-color: ${media.color};">
-                        <div class="card-body">
-                            <i class="${media.icon} social-icon" style="color: ${media.color};"></i>
-                            <h5 class="card-title">${media.name}</h5>
-                        </div>
-                    </div>
-                `;
+        return output;
+      }
 
-        cardDiv.addEventListener("click", () => {
-          toggleCardSelection(index);
+      // JavaScript code to handle card selection and tag management
+
+      // Array to store the selected card indices
+      const selectedCardIndices = [0, 1, 2, 3];
+
+      // Array to store the selected content type indices
+      const selectedContentTypeIndices = [0, 3, 5];
+
+      const taglist = [];
+
+      // Sample social media data with icons
+
+      const col1 = document.getElementById("col1");
+      const col2 = document.getElementById("col2");
+      const backbtn = document.getElementById("backbtn");
+      // Sample JSON object containing tags data
+
+      var tagsData = ('{{ tags_json }}'.replace(/&#34;/g, '"')).replace(/&#39;/g, '');
+      // Parse the JSON data into a JavaScript object
+      var tagsList = JSON.parse(tagsData);
+
+      const tagInput = document.getElementById("tagInput");
+      const suggestionsContainer = document.getElementById("suggestions");
+      backbtn.addEventListener("click", function () {
+
+        col1.classList.toggle("col-2");
+        col1.classList.toggle("col-12");
+        col2.classList.toggle("col-10");
+        col2.classList.toggle("col-0");
+        backbtn.classList.toggle("fa-arrow-left");
+        backbtn.classList.toggle("fa-arrow-right");
+
+      });
+      tagInput.addEventListener("input", function () {
+        const userInput = tagInput.value.toLowerCase();
+        const filteredTags = Object.keys(tagsList).filter(function (tag) {
+          return tag.toLowerCase().includes(userInput);
         });
 
-        socialMediaRow.appendChild(cardDiv);
+        displayTags(filteredTags);
       });
-    }
 
-    // Function to create content type cards
-    function createContentTypes() {
-      const contentTypesRow = document.getElementById("contentTypesRow");
-      contentTypes.forEach((type, index) => {
-        const cardDiv = document.createElement("div");
-        cardDiv.classList.add("col", "center-text");
-        cardDiv.innerHTML = `
-                    <div class="card" style="border-color: ${type.color};">
-                        <div class="card-body">
-                            <i class="${type.icon} content-type-icon" style="color: ${type.color};"></i>
-                            <h5 class="card-title">${type.name}</h5>
-                        </div>
-                    </div>
-                `;
+      function displayTags(tags) {
+        // Clear previous suggestions
+        suggestionsContainer.innerHTML = "";
 
-        cardDiv.addEventListener("click", () => {
-          toggleContentTypeSelection(index);
+        // Display new suggestions
+        tags.forEach(function (tag) {
+          const tagElement = document.createElement("div");
+          tagElement.textContent = tag;
+          tagElement.classList.add("suggestion", "suggestion-item");
+          tagElement.addEventListener("click", function () {
+            // Set the clicked tag as the input value
+            tagInput.value = tag;
+            suggestionsContainer.innerHTML = "";
+          });
+          suggestionsContainer.appendChild(tagElement);
+        });
+      }
+
+
+      // Sample content types with icons
+
+
+      // Function to create social media cards
+      function initSocialMediaCards() {
+        const socialMediaRow = document.getElementById("socialMediaRow");
+        const smcards = document.querySelectorAll('.smcard');
+
+        smcards.forEach((cardDiv, index) => { // Added 'index' as a parameter
+          cardDiv.addEventListener("click", () => {
+            toggleCardSelection(index);
+          });
+        });
+      }
+
+
+      // Function to toggle card selection
+      function toggleCardSelection(cardIndex) {
+        if (selectedCardIndices.includes(cardIndex)) {
+          // If already selected, deselect the card
+          const indexToRemove = selectedCardIndices.indexOf(cardIndex);
+          selectedCardIndices.splice(indexToRemove, 1);
+        } else {
+          // If not selected, select the card
+          selectedCardIndices.push(cardIndex);
+        }
+
+        // Update the card styles based on selection
+        updateCardStyles();
+      }
+      // Function to create content type cards
+      function initContentTypes() {
+        const contentTypesRow = document.getElementById("contentTypesRow");
+        const ctcards = document.querySelectorAll('.ctcard');
+
+        ctcards.forEach((cardDiv, index) => { // Added 'index' as a parameter
+          cardDiv.addEventListener("click", () => {
+            toggleContentTypeSelection(index);
+          });
+        });
+      }
+
+
+
+      // Function to toggle content type selection
+      function toggleContentTypeSelection(contentTypeIndex) {
+        if (selectedContentTypeIndices.includes(contentTypeIndex)) {
+          // If already selected, deselect the content type
+          const indexToRemove = selectedContentTypeIndices.indexOf(contentTypeIndex);
+          selectedContentTypeIndices.splice(indexToRemove, 1);
+        } else {
+          // If not selected, select the content type
+          selectedContentTypeIndices.push(contentTypeIndex);
+        }
+
+        // Update the content type card styles based on selection
+        updateContentTypeStyles();
+      }
+
+      // Function to update card styles based on selection
+      function updateCardStyles() {
+        const socialMediaCards = document.querySelectorAll("#socialMediaRow .card");
+        socialMediaCards.forEach((card, index) => {
+          if (selectedCardIndices.includes(index)) {
+            card.classList.add("selected-card");
+          } else {
+            card.classList.remove("selected-card");
+          }
+        });
+      }
+
+      // Function to update content type card styles based on selection
+      function updateContentTypeStyles() {
+        const contentTypeCards = document.querySelectorAll("#contentTypesRow .card");
+        contentTypeCards.forEach((card, index) => {
+          if (selectedContentTypeIndices.includes(index)) {
+            card.classList.add("selected-card");
+          } else {
+            card.classList.remove("selected-card");
+          }
+        });
+      }
+
+      // Function to add a tag
+      function addTag() {
+        const tagInput = document.querySelector('.form-control');
+        const tagText = tagInput.value.trim();
+        if (tagText) {
+          taglist.push(tagText);
+          const tagContainer = document.querySelector('.tags-container');
+          const tag = document.createElement('span');
+          tag.classList.add('badge', 'bg-secondary', 'mx-2');
+          tag.innerHTML = `${tagText} <span class="badge-close">&times;</span>`;
+          tagContainer.appendChild(tag);
+
+          // Clear the tag input field
+          tagInput.value = '';
+        }
+      }
+      function addTag2(tagText) {
+        if (tagText) {
+          taglist.push(tagText);
+          const tagContainer = document.querySelector('.tags-container');
+          const tag = document.createElement('span');
+          tag.classList.add('badge', 'bg-secondary', 'mx-2');
+          tag.innerHTML = `${tagText} <span class="badge-close">&times;</span>`;
+          tagContainer.appendChild(tag);
+
+        }
+      }
+      // Function to simulate typing effect for displaying messages
+      function typeMessage(message, element) {
+        const typingSpeed = 5; // Adjust the typing speed as needed (milliseconds per character)
+        let charIndex = 0;
+        const messageLength = message.length;
+        const messageElement = document.getElementById(element);
+
+        function type() {
+          if (charIndex < messageLength) {
+            if (message.charAt(charIndex) === '\n') {
+              messageElement.appendChild(document.createElement('br'));
+            } else {
+              messageElement.appendChild(document.createTextNode(message.charAt(charIndex)));
+            }
+
+            charIndex++;
+            setTimeout(type, typingSpeed);
+          }
+        }
+
+        type();
+      }
+      // Event listener for adding tags
+      const addTagButton = document.querySelector('.add-tag-button');
+      addTagButton.addEventListener('click', () => {
+        addTag();
+      });
+
+      // Event listener for deleting tags
+      const tagContainer = document.querySelector('.tags-container');
+      tagContainer.addEventListener('click', (event) => {
+        if (event.target.classList.contains('badge-close')) {
+          const removedTag = event.target.parentElement.textContent.trim(); // Get the text content of the tag to be removed
+          removeTag(removedTag);
+          event.target.parentElement.remove();
+        }
+      });
+      // Function to remove a tag from the list
+      function removeTag(tagText) {
+        const tagIndex = taglist.indexOf(tagText);
+        if (tagIndex !== -1) {
+          taglist.splice(tagIndex, 1); // Remove the tag from the array
+        }
+      }
+
+      function generateReport(containerId, data) {
+        const container = document.getElementById(containerId);
+
+        // Create a table for the entire report with Bootstrap classes
+        const reportTable = document.createElement('table');
+        reportTable.classList.add('table', 'table-striped', 'table-bordered');
+
+        // Create header cells for platforms with Bootstrap class
+        const platformList = Object.keys(data);
+        const headerRow = document.createElement('tr');
+        headerRow.appendChild(document.createElement('th')); // Empty cell for the first column
+
+        platformList.forEach((platform) => {
+          const headerCell = document.createElement('th');
+          headerCell.textContent = platform;
+          headerRow.appendChild(headerCell);
         });
 
-        contentTypesRow.appendChild(cardDiv);
-      });
-    }
+        // Append the header row to the report table
+        reportTable.appendChild(headerRow);
 
-    // Function to toggle card selection
-    function toggleCardSelection(cardIndex) {
-      if (selectedCardIndices.includes(cardIndex)) {
-        // If already selected, deselect the card
-        const indexToRemove = selectedCardIndices.indexOf(cardIndex);
-        selectedCardIndices.splice(indexToRemove, 1);
-      } else {
-        // If not selected, select the card
-        selectedCardIndices.push(cardIndex);
-      }
+        // Loop through data to create rows for each content type and field
+        for (const contentType in data[platformList[0]]) {
+          const contentRow = document.createElement('tr');
+          const contentTypeCell = document.createElement('td');
+          contentTypeCell.textContent = contentType;
+          contentRow.appendChild(contentTypeCell);
 
-      // Update the card styles based on selection
-      updateCardStyles();
-    }
+          platformList.forEach((platform) => {
+            const platformData = data[platform][contentType];
+            for (const field in platformData) {
+              const fieldRow = document.createElement('tr');
+              const fieldCell = document.createElement('td');
+              fieldCell.textContent = field;
+              fieldRow.appendChild(fieldCell);
 
-    // Function to toggle content type selection
-    function toggleContentTypeSelection(contentTypeIndex) {
-      if (selectedContentTypeIndices.includes(contentTypeIndex)) {
-        // If already selected, deselect the content type
-        const indexToRemove = selectedContentTypeIndices.indexOf(contentTypeIndex);
-        selectedContentTypeIndices.splice(indexToRemove, 1);
-      } else {
-        // If not selected, select the content type
-        selectedContentTypeIndices.push(contentTypeIndex);
-      }
+              platformList.forEach((platform) => {
+                const durationData = data[platform][contentType][field].prediction;
+                const dataCell = document.createElement('td');
+                dataCell.textContent = durationData || ''; // Handle missing data
+                fieldRow.appendChild(dataCell);
+              });
 
-      // Update the content type card styles based on selection
-      updateContentTypeStyles();
-    }
+              // Append the field row to the report table
+              contentRow.appendChild(fieldRow);
+            }
+          });
 
-    // Function to update card styles based on selection
-    function updateCardStyles() {
-      const socialMediaCards = document.querySelectorAll("#socialMediaRow .card");
-      socialMediaCards.forEach((card, index) => {
-        if (selectedCardIndices.includes(index)) {
-          card.classList.add("selected-card");
-        } else {
-          card.classList.remove("selected-card");
+          // Append the content row to the report table
+          reportTable.appendChild(contentRow);
         }
-      });
-    }
 
-    // Function to update content type card styles based on selection
-    function updateContentTypeStyles() {
-      const contentTypeCards = document.querySelectorAll("#contentTypesRow .card");
-      contentTypeCards.forEach((card, index) => {
-        if (selectedContentTypeIndices.includes(index)) {
-          card.classList.add("selected-card");
-        } else {
-          card.classList.remove("selected-card");
+        // Append the report table to the container
+        container.appendChild(reportTable);
+      }
+
+
+      function createTable(containerId, data) {
+        let container = document.getElementById(containerId);
+
+        let table = document.createElement('table');
+
+        let headerRow = document.createElement('tr');
+
+        let platformHeader = document.createElement('th');
+        platformHeader.textContent = 'Platform';
+        headerRow.appendChild(platformHeader);
+
+        let postTypeHeader = document.createElement('th');
+        postTypeHeader.textContent = 'Post Type';
+        headerRow.appendChild(postTypeHeader);
+
+        let metrics = Object.keys(data[Object.keys(data)[0]][Object.keys(data[Object.keys(data)[0]])[0]]);
+
+        for (let metric of metrics) {
+          let headerCell = document.createElement('th');
+          headerCell.textContent = metric;
+          headerRow.appendChild(headerCell);
         }
-      });
-    }
 
-    // Function to add a tag
-    function addTag() {
-      const tagInput = document.querySelector('.form-control');
-      const tagText = tagInput.value.trim();
-      if (tagText) {
-        taglist.push(tagText);
-        const tagContainer = document.querySelector('.tags-container');
-        const tag = document.createElement('span');
-        tag.classList.add('badge', 'bg-secondary', 'mx-2');
-        tag.innerHTML = `${tagText} <span class="badge-close">&times;</span>`;
-        tagContainer.appendChild(tag);
+        table.appendChild(headerRow);
 
-        // Clear the tag input field
-        tagInput.value = '';
-      }
-    }
-    function addTag2(tagText) {
-      if (tagText) {
-        taglist.push(tagText);
-        const tagContainer = document.querySelector('.tags-container');
-        const tag = document.createElement('span');
-        tag.classList.add('badge', 'bg-secondary', 'mx-2');
-        tag.innerHTML = `${tagText} <span class="badge-close">&times;</span>`;
-        tagContainer.appendChild(tag);
+        for (let platform in data) {
+          for (let postType in data[platform]) {
 
-      }
-    }
-    // Function to simulate typing effect for displaying messages
-    function typeMessage(message, element) {
-      const typingSpeed = 50; // Adjust the typing speed as needed (milliseconds per character)
-      let charIndex = 0;
-      const messageLength = message.length;
-      const messageElement = document.getElementById(element);
+            let row = document.createElement('tr');
 
-      function type() {
-        if (charIndex < messageLength) {
-          messageElement.innerHTML += message.charAt(charIndex);
-          charIndex++;
-          setTimeout(type, typingSpeed);
+            let platformCell = document.createElement('td');
+            platformCell.textContent = platform;
+            row.appendChild(platformCell);
+
+            let typeCell = document.createElement('td');
+            typeCell.textContent = postType;
+            row.appendChild(typeCell);
+
+            for (let metric of metrics) {
+              let cell = document.createElement('td');
+              cell.textContent = data[platform][postType][metric];
+              row.appendChild(cell);
+            }
+
+            table.appendChild(row);
+          }
         }
+
+        container.appendChild(table);
       }
 
-      type();
-    }
-    // Event listener for adding tags
-    const addTagButton = document.querySelector('.add-tag-button');
-    addTagButton.addEventListener('click', () => {
-      addTag();
-    });
+      function createPivotTable(containerId, data) {
 
-    // Event listener for deleting tags
-    const tagContainer = document.querySelector('.tags-container');
-    tagContainer.addEventListener('click', (event) => {
-      if (event.target.classList.contains('badge-close')) {
-        const removedTag = event.target.parentElement.textContent.trim(); // Get the text content of the tag to be removed
-        removeTag(removedTag);
-        event.target.parentElement.remove();
+        const pivotTableContainer = document.getElementById(containerId);
+
+        const pivotData = new pivot.PivotData(data);
+
+        const pivotTable = new pivot.PivotTable({
+          data: pivotData,
+          rows: ["Platform"],
+          cols: ["Post Type"],
+          aggregatorName: "Count",
+          rendererName: "Table"
+        });
+
+        pivotTable.subscribe(function (table) {
+          pivotTableContainer.innerHTML = '';
+          pivotTableContainer.appendChild(table.node);
+        });
+
+        pivotTable.refresh();
+
       }
-    });
-    // Function to remove a tag from the list
-    function removeTag(tagText) {
-      const tagIndex = taglist.indexOf(tagText);
-      if (tagIndex !== -1) {
-        taglist.splice(tagIndex, 1); // Remove the tag from the array
+
+
+
+
+
+
+
+
+
+
+
+
+      function generateContentReport(data) {
+        let report = "Content Type Analysis Report\n\n";
+
+        // Iterate through each content type (Photo, Video, etc.)
+        for (const contentType in data['Facebook']) {
+          report += `${contentType}:-\n`;
+
+          // Find the platform with the highest engagement for the current content type
+          let maxEngagement = 0;
+          let bestPlatform = '';
+
+          for (const platform in data) {
+            const engagement = data[platform][contentType]['engagements'];
+            if (engagement > maxEngagement) {
+              maxEngagement = engagement;
+              bestPlatform = platform;
+            }
+          }
+
+          // Add platform recommendation to the report
+          report += `The best platform for posting ${contentType.toLowerCase()} content is ${bestPlatform}. `;
+          report += `It has the highest engagement with an avergae approximate of ${maxEngagement.toFixed(2)} engagements. `;
+
+          // Add other relevant information
+          report += `This platform will most likely recieve ${data[bestPlatform][contentType]['impressions'].toFixed(2)} impressions, `;
+          report += `and ${data[bestPlatform][contentType]['reactions'].toFixed(0)} reactions, `;
+          report += `including ${data[bestPlatform][contentType]['likes'].toFixed(0)} likes, `;
+          report += `and engaged ${data[bestPlatform][contentType]['engaged_users'].toFixed(0)} users. `;
+          report += ` Additionally, it gained ${data[bestPlatform][contentType]['subscribers'].toFixed(0)} subscribers `;
+          report += `and had ${data[bestPlatform][contentType]['shares'].toFixed(0)} shares.\n\n`;
+        }
+
+        // Trim the report to 200 words or less
+        const words = report.split(/\s+/);
+        if (words.length > 200) {
+          report = words.slice(0, 200).join(' ') + '...';
+        }
+
+        return report;
       }
-    }
 
-    // Event listener for the Analyze button
-    const analyzeButton = document.getElementById('analyzeButton');
-    const spinner = document.getElementById('spinner');
-    analyzeButton.addEventListener('click', () => {
-      // Show spinner when the Analyze button is clicked
-      spinner.style.display = 'inline-block';
 
-      // Simulate an analysis process (you can replace this with your actual analysis logic)
-      setTimeout(() => {
-        // Hide the spinner after the analysis is complete (simulated)
-        spinner.style.display = 'none';
+
+
+
+      // Event listener for the Analyze button
+      const analyzeButton = document.getElementById('analyzeButton');
+      const spinner = document.getElementById('spinner');
+      analyzeButton.addEventListener('click', () => {
+        
+        const analysisResult = document.getElementById('analysisResult');
+              analysisResult.innerHTML = ''; // Clear existing text
+        typeMessage("Wait few seconds your answers are on the way", 'analysisResult');
+        // Show spinner when the Analyze button is clicked
+        spinner.style.display = 'inline-block';
+
+
+        // Hide the spinner after the analysis is complete (simulated)x
         const indata = {
           "content": selectedContentTypeIndices,
           "networks": selectedCardIndices,
@@ -430,29 +783,47 @@ If you had two hours to listen to someone speak, what would you like to listen t
         };
 
         // Send a POST request to localhost/api/pred
-        fetch('http://localhost/api/pred', {
+        fetch('http://127.0.0.1:5000/pred', {
           method: 'POST',
           body: JSON.stringify(indata),
           headers: {
             'Content-Type': 'application/json'
           }
         })
-          .then(response => response.json())
+          .then(response => response.text())
           .then(data => {
             // Handle the response data here
-            console.log(data);
+            // console.log(data);
 
             // Check if there's a response
-            if (data && data.response) {
+            if (data) {
               // Replace the "Lorem ipsum" text with the response
-              const analysisResult = document.getElementById('analysisResult');
               analysisResult.innerHTML = ''; // Clear existing text
-              typeMessage(data.response, 'analysisResult');
+              if (col1.classList.contains("col-2")) {
+                col1.classList.toggle("col-2");
+                col1.classList.toggle("col-12");
+                col2.classList.toggle("col-10");
+                col2.classList.toggle("col-0");
+                backbtn.classList.toggle("fa-arrow-left");
+                backbtn.classList.toggle("fa-arrow-right");
+              }
+              // console.log(JSON.parse(data))
+              // generateReport('analysisResult', JSON.parse(data));
+              // createPivotTable('analysisResult', data)
+              typeMessage("This is purly based on prediction you can refer to the tableau dashboard or report finings for more insight", 'analysisResulttop');
+              cdata = convertJson(JSON.parse(data));
+              setTimeout(() => {
+                renderpivot(cdata)
+                typeMessage(generateContentReport(JSON.parse(data)), 'analysisResult')
+
+                spinner.style.display = 'none';
+              }, 5000);
             } else {
               // Display an error message with a typing effect
               const analysisResult = document.getElementById('analysisResult');
               analysisResult.innerHTML = ''; // Clear existing text
-              typeMessage("We have a problem processing your input...", 'analysisResult');
+              typeMessage(" We have a problem processing your input...", 'analysisResulttop');
+                spinner.style.display = 'none';
             }
           })
           .catch(error => {
@@ -460,19 +831,21 @@ If you had two hours to listen to someone speak, what would you like to listen t
             // Display an error message with a typing effect
             const analysisResult = document.getElementById('analysisResult');
             analysisResult.innerHTML = ''; // Clear existing text
-            typeMessage("We have a problem processing your input...", 'analysisResult');
+            typeMessage(" We have a problem processing your input...", 'analysisResulttop');
+                spinner.style.display = 'none';
           });
-      }, 2000); // Simulated delay of 2 seconds
+      });
+      // Initialize the social media cards and content types
+      initSocialMediaCards();
+      initContentTypes();
+      updateContentTypeStyles()
+      updateCardStyles()
+      addTag2('Viral')
+      addTag2('Stanbic')
+      addTag2('IBTC')
+      addTag2('Finance')
+
     });
-    // Initialize the social media cards and content types
-    createSocialMediaCards();
-    createContentTypes();
-    updateContentTypeStyles()
-    updateCardStyles()
-    addTag2('Viral')
-    addTag2('Stanbic')
-    addTag2('IBTC')
-    addTag2('Finance')
   </script>
 </body>
 
